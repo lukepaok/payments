@@ -1,0 +1,75 @@
+
+
+
+* {margin:0;padding:0}
+
+
+
+form{
+    margin-top: 25%;
+    margin-left: 25%;
+    margin-right:25%;
+    width: 40%;
+}
+
+#message{
+
+    margin-left:130px;
+
+    width:350px;
+}
+
+
+#select_all {
+    
+    margin-top: 25%;
+    margin-left: 10%;
+    margin-right:3%;
+   
+   
+
+}
+
+#label {
+    position:absolute;
+    margin-top: -50px;
+    margin-left: 3%;
+    margin-right:5%;
+   
+
+}
+
+#listbox {
+    display:inline-block;
+    margin-left:10px;
+    width:200px;
+}
+#datepicker {
+    display:inline-block;
+    margin-left:10px;
+    width:60px;
+}
+
+#clear {
+    display:inline-block;
+    margin-left:5px;
+    width:60px;
+}
+
+
+#submit_pdf {
+    position:absolute;
+    left:75px;
+    top:20px;
+}
+
+.container{
+
+  color:white;
+
+
+}
+
+
+
+
