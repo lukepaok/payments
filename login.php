@@ -1,16 +1,17 @@
 <?php
+/* ----------------------------------------------------------------------------------------------------------------------------
+    PAYMENTS
+    login.php
+---------------------------------------------------------------------------------------------------------------------------- */
 include ('includes/session.inc');
 ini_set('default_charset', 'ISO-8859-7');
 $user=$_POST['name'];
 $pass=$_POST['password'];
 global $db;
 //$SQL_User = 'SELECT EMP_ID FROM "ACCESS" WHERE ACC_USERNAME='."'".$_POST['name']."' AND ACC_PASSWORD='".iconv('UTF-8','ISO-8859-7', $_POST['password'])."'";
-$SQL_User = 'SELECT EMP_ID FROM "ACCESS" WHERE ACC_USERNAME='."'".$_POST['name']."' AND ACC_PASSWORD='".$_POST['password']."'";
-$RES_User = DB_query($SQL_User,$db);
-$ROW_User = DB_fetch_array($RES_User);
-
-
-
+$SQL_User='SELECT EMP_ID FROM "ACCESS" WHERE ACC_USERNAME='."'".$_POST['name']."' AND ACC_PASSWORD='".$_POST['password']."'";
+$RES_User=DB_query($SQL_User,$db);
+$ROW_User=DB_fetch_array($RES_User);
 if (DB_num_rows($RES_User)>0) {
   unset($_SESSION['FirstName']);
   unset($_SESSION['LastName']);

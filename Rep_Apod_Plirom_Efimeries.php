@@ -66,7 +66,7 @@ $Misth_Per=$myrow['PER_MONTH'];
 $Misth_Year=$myrow['PER_YEAR'];
 $ReportTitle3='лгмас/етос   '.$myrow['PAY_COMMENTS'];
 $Lock_Efim=G_DBfield("SELECT LOCK_EFIM FROM PAYROLL_TRANSACTIONS WHERE PAYROLL_TRANSACTIONS.PAY_YEAR || substr('0' || PAYROLL_TRANSACTIONS.PAT_ID, -2, 2) =".$PatYearFrom.substr('0'.$PatFrom,-2,2),"LOCK_EFIM");
-if ($_SESSION['GLInstall']!='AGLAIA') { $Lock_Efim=1; }
+if (!in_array($_SESSION['GLInstall'],array('AGLAIA','YPE2'))) { $Lock_Efim=1; }
 if ($Lock_Efim>0) {
   foreach ($MasterTable as $myrow) {
     unset($DetailTable);

@@ -1,181 +1,180 @@
 <?php
-//$Compute_Payroll=1; 'All'=>'œÎÂÚ ÔÈ ÃÈÛËÔ‰ÔÛﬂÂÚ','1'=>'‘·ÍÙÈÍﬁ','2'=>'¡Ì·‰ÒÔÏÈÍ‹ ‘·ÍÙÈÍﬁÚ','3'=>'‘·ÍÙÈÍﬁ & ¡Ì·‰ÒÔÏÈÍ‹','4'=>'’ÂÒ˘ÒﬂÂÚ','5'=>'¡Ì·‰ÒÔÏÈÍ‹ ’ÂÒ˘ÒÈ˛Ì','6'=>'’ÂÒ˘ÒﬂÂÚ & ¡Ì·‰ÒÔÏÈÍ‹','7'=>'≈ˆÁÏÂÒﬂÂÚ','8'=>'¡Ì·‰ÒÔÏÈÍ‹ ≈ˆÁÏÂÒÈ˛Ì','9'=>'≈ˆÁÏÂÒﬂÂÚ & ¡Ì·‰ÒÔÏÈÍ‹','10'=>'≈ÈÎ›ÔÌ ≈ˆÁÏÂÒﬂÂÚ','11'=>'¡Ì·‰ÒÔÏÈÍ‹ ≈ÈÎ›ÔÌ ≈ˆÁÏÂÒÈ˛Ì','12'=>'≈ÈÎ›ÔÌ ≈ˆÁÏÂÒﬂÂÚ & ¡Ì·‰ÒÔÏÈÍ‹'
-// '13'=>'EÈ‰ÈÍ·ÛË›ÌÙ· ¡Ì·‰ÒÔÏÈÍ‹ '14'=>–ÒÔÛËÂÙÂÚ ¡ÏÔÈ‚ÂÚ (”ıÌÔÎÔ) 15'=>XML –ÒÔÛËÂÙÂÚ ¡ÏÔÈ‚ÂÚ (≈ÈÛÙÁÏÔÌÈÍ¸ –ÒÔÛ˘ÈÍ¸) '16'=>XML ≈÷«Ã≈—…ŸÕ' 
-// '17'=>'XML ¬¡—ƒ…ŸÕ ¡Õ¡ƒ—œÃ… ¡' '18'=>'XML ≈÷«Ã≈—…ŸÕ ¡Õ¡ƒ—œÃ… ¡'
-// '19'=>'XML ¬¡—ƒ…ŸÕ ◊Ÿ—…” ¡Õ¡ƒ—œÃ… ¡' '20'=>'XML ≈÷«Ã≈—…ŸÕ ◊Ÿ—…” ¡Õ¡ƒ—œÃ… ¡'
-// '21'=>'¡Ãœ…¬≈” Ã≈ÀŸÕ ƒ”'
+
+function asthenDetails($empId,$month,$year) {
+  $retArray=array();
+  $retArray['IKA_LESS_3']=0;
+  $retArray['IKA_MORE_3']=0;
+  $retArray['IKA_LESS_3_KETHEA']=0;
+  $retArray['IKA_MORE_3_KETHEA']=0;
+  $sql="SELECT * FROM EMP_DEDUCTIONS WHERE EMP_ID={$empId}";
+  $res=DB_query($sql,$db);
+  foreach ($res as $value) {
+    $dateEl=explode('-',$value['EDED_DATE2']);
+    if (($dateEl[0]==$year) && ($dateEl[1]==$month)) {
+      switch ($value['EDED_SHORT']) {
+        case '¡…':
+          $retArray['IKA_LESS_3']+=$value['DAYS_LESS_3'];
+          $retArray['IKA_MORE_3']+=$value['ASTHEN_DAYS']-$value['DAYS_LESS_3'];
+          break;
+        case '¡… ':
+          $retArray['IKA_LESS_3_KETHEA']+=$value['DAYS_LESS_3'];
+          $retArray['IKA_MORE_3_KETHEA']+=$value['ASTHEN_DAYS']-$value['DAYS_LESS_3'];
+          break;
+      }
+    }
+  }
+  return $retArray;
+}
+
+function Get_con_param($FEmpid,$CParam) {
+  $Con_Params=array(1=>'Ÿ—œÃ…”»…œ”',2=>'œ¡≈ƒ_ƒ–_13');
+  $SQL="SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS WHERE EMP_ID=".$FEmpid." AND ECOP_VARIABLE='".$Con_Params[$CParam]."'";
+  $RES=DB_query($SQL,$db,'','',false,false);
+  $ROW=DB_fetch_array($RES);
+  return $ROW['ECOP_VALUE'];
+}
 
 function sinton($FPEmpid) {
-  $exsalsql  = " SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS";
-  $exsalsql .= " WHERE EMP_ID = ".$FPEmpid." AND ECOP_VARIABLE='”’Õ‘œÕ…”‘«”'";
-  $exsalres  = DB_query($exsalsql,$db);
-  $exsalrow  = DB_fetch_array($exsalres);
-  $sintonistis = $exsalrow['ECOP_VALUE'];
+  $exsalsql=" SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS";
+  $exsalsql.=" WHERE EMP_ID=".$FPEmpid." AND ECOP_VARIABLE='”’Õ‘œÕ…”‘«”'";
+  $exsalres=DB_query($exsalsql,$db);
+  $exsalrow=DB_fetch_array($exsalres);
+  $sintonistis=$exsalrow['ECOP_VALUE'];
   return $sintonistis;
 }
 
-
-function agrotikos($FPEmpid){
-
-
-    $exsalsql  = " SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS";
-    $exsalsql .= " WHERE EMP_ID = ".$FPEmpid." AND ECOP_VARIABLE='¬¡»Ãœ”_ƒ’'";
-    $exsalres  = DB_query($exsalsql,$db);
-    $exsalrow  = DB_fetch_array($exsalres);
-    $agrotikos = $exsalrow['ECOP_VALUE'];
-
-
-
-   return $agrotikos;
-
+function niarxos($FPEmpid) {
+  $sql=" SELECT CON_ID FROM EMPLOYEES";
+  $sql.=" WHERE EMP_ID=".$FPEmpid."";
+  $res=DB_query($sql,$db);
+  $row=DB_fetch_array($res);
+  $niarxos=$row['CON_ID'];
+  return $niarxos;
 }
 
+function gzoni($FPEmpid) {
+  $exsalsql=" SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS";
+  $exsalsql.=" WHERE EMP_ID=".$FPEmpid." AND ECOP_VARIABLE='√_∆ŸÕ«'";
+  $exsalres=DB_query($exsalsql,$db);
+  $exsalrow=DB_fetch_array($exsalres);
+  $gzoni=$exsalrow['ECOP_VALUE'];
+  return $gzoni;
+}
+
+function agrotikos($FPEmpid) {
+  $exsalsql=" SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS";
+  $exsalsql.=" WHERE EMP_ID=".$FPEmpid." AND ECOP_VARIABLE='¬¡»Ãœ”_ƒ’'";
+  $exsalres=DB_query($exsalsql,$db);
+  $exsalrow=DB_fetch_array($exsalres);
+  $agrotikos=$exsalrow['ECOP_VALUE'];
+  return $agrotikos;
+}
 
 function plafon_efimerion($descr){
-
-
     $exsalsql  = " SELECT PRM_TBL_NVALUED FROM PARAMETERS";
     $exsalsql .= " WHERE PRM_TBL_CVALUE15 ='".$descr."' AND PRM_TBL_FOR=1 AND PRM_DESCR='PLAFON EFIMERION'";
     $exsalres  = DB_query($exsalsql,$db);
     $exsalrow  = DB_fetch_array($exsalres);
     $plafon    = $exsalrow['PRM_TBL_NVALUED'];
-
-
-
    return $plafon;
+}
 
+function fix_amount($FPEmpid) {
+  $exsalsql=" SELECT EMP_DS_AMOUNT FROM EMPLOYEES";
+  $exsalsql.=" WHERE EMP_ID=".$FPEmpid."";
+  $exsalres=DB_query($exsalsql,$db);
+  $exsalrow=DB_fetch_array($exsalres);
+  $fix_amount=$exsalrow['EMP_DS_AMOUNT'];
+  return $fix_amount;
 }
 
 function GetMTEfim($id,$month,$Year) {
-$ClientInstall=$_SESSION['GLInstall'];
-if ($month<=7 and $Year<=2012){
-  $MTEfim = array (
-      1 =>  array('254.36','344.06','269.30','369.70','384.64'),
-      2 =>  array('196.51','273.42','209.37','295.38','308.24'),
-      3 =>  array('168.83','232.96','179.55','251.28','262.00'),
-      4 =>  array('127.18','172.04','134.66','184.92','192.40'),
-      5 =>  array('205.60','272.80','216.80','292.00','303.20'),
-      6 =>  array('227.95','305.52','240.91','327.68','340.64'),
-      7 =>  array('106.32','163.02','117.26','189.06','200.00'),
-      8 =>  array( '98.88','151.62','109.06','175.90','186.08'),
-      9 =>  array( '98.88','151.62','109.06','175.90','186.08'),
-     10 =>  array('141.91','193.62','150.57','208.38','217.04'),
-     11 =>  array('153.25','210.08','162.69','226.32','235.76'),
-    12 =>  array('138.27','188.30','146.65','202.58','210.56'),
-    13 =>  array('148.34','202.92','157.42','218.60','227.68')
-                  );
-
-
-              }
-else{
-$MTEfim = array (
-      1 =>  array('150.88','206.62','160.14','222.58','231.84'),
-      2 =>  array('145.55','198.94','154.49','214.18','223.12'),
-      3 =>  array('130.99','177.66','138.81','190.98','198.80'),
-      4 =>  array('106.95','142.52','112.91','152.68','158.64'),
-      5 =>  array('131.75','178.72','139.59','192.16','200.00'),
-      6 =>  array('141.57','193.06','150.15','207.74','216.32'),
-      7 =>  array( '72.48','111.12','79.92','128.96','136.40'),
-      8 =>  array( '72.48','111.12','79.92','128.96','136.40'),
-      9 =>  array( '72.48','111.12','79.92','128.96','136.40'),
-     10 =>  array('111.35','148.90','117.61','159.66','165.92'),
-     11 =>  array('117.87','158.48','124.67','170.08','176.88'),
-    12 =>  array('138.27','188.30','146.65','202.58','210.56'),
-    13 =>  array('148.34','202.92','157.42','218.60','227.68'),
-	 21 =>  array('150.88','206.62','160.14','222.58','231.84'),
-     22 =>  array('145.55','198.94','154.49','214.18','223.12'),
-     23 =>  array('130.99','177.66','138.81','190.98','198.80'),
-     24 =>  array('106.95','142.52','112.91','152.68','158.64'),
-     25 =>  array('131.75','178.72','139.59','192.16','200.00'),
-     26 =>  array('141.57','193.06','150.15','207.74','216.32'),
-     27 =>  array( '72.48','111.12','79.92','128.96','136.40'),
-     28 =>  array( '72.48','111.12','79.92','128.96','136.40'),
-     29 =>  array( '72.48','111.12','79.92','128.96','136.40'),
-     30 =>  array('111.35','148.90','117.61','159.66','165.92'),
-     31 =>  array('117.87','158.48','124.67','170.08','176.88'),
-     32 =>  array('138.27','188.30','146.65','202.58','210.56'),
-     33 =>  array('148.34','202.92','157.42','218.60','227.68')
-                  );
-
-}
-/*         // }
-else {
-$MTEfim = array (
-      1 =>  array('280.60','382.42','297.58','411.50','428.48'),
-      2 =>  array('218.94','306.10','233.44','331.10','345.60'),
-      3 =>  array('187.62','260.38','199.76','281.22','293.36'),
-      4 =>  array('140.30','191.22','148.80','205.82','214.32'),
-      5 =>  array('225.07','301.26','237.77','323.06','335.76'),
-      6 =>  array('250.55','338.50','265.21','363.66','378.32'),
-      7 =>  array('106.32','163.02','117.26','189.06','200.00'),
-      8 =>  array( '98.88','151.62','109.06','175.90','186.08'),
-      9 =>  array( '98.88','151.62','109.06','175.90','186.08'),
-     10 =>  array('157.06','215.66','166.80','232.50','242.24'),
-     11 =>  array('169.76','234.26','180.50','252.70','263.44')
-                  );             }
-   */
+  $ClientInstall=$_SESSION['GLInstall'];
+  if ($month<=7 && $Year<=2012) {
+    $MTEfim=array(
+       1=>array('254.36','344.06','269.30','369.70','384.64'), 2=>array('196.51','273.42','209.37','295.38','308.24'), 3=>array('168.83','232.96','179.55','251.28','262.00'),
+       4=>array('127.18','172.04','134.66','184.92','192.40'), 5=>array('205.60','272.80','216.80','292.00','303.20'), 6=>array('227.95','305.52','240.91','327.68','340.64'),
+       7=>array('106.32','163.02','117.26','189.06','200.00'), 8=>array( '98.88','151.62','109.06','175.90','186.08'), 9=>array( '98.88','151.62','109.06','175.90','186.08'),
+      10=>array('141.91','193.62','150.57','208.38','217.04'),11=>array('153.25','210.08','162.69','226.32','235.76'),12=>array('138.27','188.30','146.65','202.58','210.56'),
+      13=>array('148.34','202.92','157.42','218.60','227.68')
+      );
+  }
+  if ($month<6 and $Year<=2017) {
+    $MTEfim = array (
+       1=>array('150.88','206.62','160.14','222.58','231.84'), 2=>array('145.55','198.94','154.49','214.18','223.12'), 3=>array('130.99','177.66','138.81','190.98','198.80'),
+       4=>array('106.95','142.52','112.91','152.68','158.64'), 5=>array('131.75','178.72','139.59','192.16','200.00'), 6=>array('141.57','193.06','150.15','207.74','216.32'),
+       7=>array( '79.52','111.12','79.92','128.96','136.40'),  8=>array( '79.52','111.12','79.92','128.96','136.40'),  9=>array( '83.36','127.32','91.08','146.44','154.16'),
+      10=>array('111.35','148.90','117.61','159.66','165.92'),11=>array('117.87','158.48','124.67','170.08','176.88'),12=>array('138.27','188.30','146.65','202.58','210.56'),
+      13=>array('148.34','202.92','157.42','218.60','227.68'),
+      16=>array('91.12','125.26','99.54','160.06','168.48'),
+      21=>array('150.88','206.62','160.14','222.58','231.84'),22=>array('145.55','198.94','154.49','214.18','223.12'),23=>array('130.99','177.66','138.81','190.98','198.80'),
+      24=>array('106.95','142.52','112.91','152.68','158.64'),25=>array('131.75','178.72','139.59','192.16','200.00'),26=>array('141.57','193.06','150.15','207.74','216.32'),
+      27=>array( '79.52','111.12','79.92','128.96','136.40'), 28=>array( '79.52','111.12','79.92','128.96','136.40'), 29=>array( '79.52','111.12','79.92','128.96','136.40'),
+      30=>array('111.35','148.90','117.61','159.66','165.92'),31=>array('117.87','158.48','124.67','170.08','176.88'),32=>array('138.27','188.30','146.65','202.58','210.56'),
+      33=>array('148.34','202.92','157.42','218.60','227.68')
+      );
+  }
+  else {
+    $MTEfim=array(
+       1=>array('160.13','219.36','170.01','236.24','246.12'), 2=>array('154.29','210.82','163.71','226.94','236.36'), 3=>array('138.80','188.18','147.02','202.30','210.52'),
+       4=>array('113.32','150.94','119.58','161.70','167.96'), 5=>array('131.75','178.72','139.59','192.16','200.00'), 6=>array('141.57','193.06','150.15','207.74','216.32'),
+       7=>array('113.32','150.94','119.58','161.70','167.96'), 8=>array('113.32','150.94','119.58','161.70','167.96'), 9=>array('113.32','150.94','119.58','161.70','167.96'),
+      10=>array('111.35','148.90','117.61','159.66','165.92'),11=>array('117.87','158.48','124.67','170.08','176.88'),12=>array('138.27','188.30','146.65','202.58','210.56'),
+      13=>array('148.34','202.92','157.42','218.60','227.68'),
+      16=>array( '91.12','125.26', '99.54','160.06','168.48'),
+      21=>array('150.88','206.62','160.14','222.58','231.84'),22=>array('145.55','198.94','154.49','214.18','223.12'),23=>array('138.80','188.18','147.02','202.30','210.52'),
+      24=>array('106.95','142.52','112.91','152.68','158.64'),25=>array('131.75','178.72','139.59','192.16','200.00'),26=>array('141.57','193.06','150.15','207.74','216.32'),
+      27=>array( '79.52','111.12', '79.92','128.96','136.40'),28=>array( '79.52','111.12', '79.92','128.96','136.40'),29=>array( '79.52','111.12', '79.92','128.96','136.40'),
+      30=>array('111.35','148.90','117.61','159.66','165.92'),31=>array('117.87','158.48','124.67','170.08','176.88'),32=>array('138.27','188.30','146.65','202.58','210.56'),
+      33=>array('148.34','202.92','157.42','218.60','227.68')
+      );
+  }
   return $MTEfim[$id];
-
-
 }
 
-function efim_paid ($FPEmpid,$Payid){
-
-
-    $exsalsql  = " SELECT EXTRA_SALARY.EXSAL_ID FROM EXTRA_SALARY, SALARY ";
-    $exsalsql .= " WHERE EXTRA_SALARY.SAL_ID = SALARY.SAL_ID AND EXTRA_SALARY.EMP_ID = ".$FPEmpid." AND SALARY.PAY_ID = '".$Payid."'";
-    $exsalres  = DB_query($exsalsql,$db);
-    $exsalrow  = DB_fetch_array($exsalres);
-    $exsal0_id = $exsalrow['EXSAL_ID'];
-
-   if($exsal0_id!=null){
-
+function efim_paid($FPEmpid,$Payid) {
+  $exsalsql =" SELECT EXTRA_SALARY.EXSAL_ID FROM EXTRA_SALARY, SALARY ";
+  $exsalsql.=" WHERE EXTRA_SALARY.SAL_ID=SALARY.SAL_ID AND EXTRA_SALARY.EMP_ID=".$FPEmpid." AND SALARY.PAY_ID='".$Payid."'";
+  $exsalres=DB_query($exsalsql,$db);
+  $exsalrow=DB_fetch_array($exsalres);
+  $exsal0_id=$exsalrow['EXSAL_ID'];
+  if ($exsal0_id!=null) {
     $tmpsql  = "select sum(exsad_credit) as credit from EXTRA_salary_detail";
     $tmpsql .= " where exsal_id=".$exsal0_id." AND (EXSAD_MODULE='HOUR' OR EXSAD_MODULE='EXTH' OR EXSAD_MODULE='PLAF' OR EXSAD_MODULE='PLAP' OR EXSAD_MODULE='PLAE' OR EXSAD_MODULE='SEVE')";
     $tmpres =DB_query($tmpsql,$db);
     $tmprow =DB_fetch_array($tmpres);
     $sysapa_amount = $tmprow['CREDIT'];
-
-   return $sysapa_amount;
-   }
+    return $sysapa_amount;
+  }
 }
 
-
-
-function Find_Pericopes($FPEmpid, $Salid, $Payid,$PatFrom,$PatYear) {
-
-include_once ('include/Func_Efimeries.php');
-
-
+function Find_Pericopes($FPEmpid,$Salid,$Payid,$PatFrom,$PatYear) {
+  include_once('include/Func_Efimeries.php');
   $Ret_func=array();
   $tmpsql = "SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS WHERE EMP_ID=".$FPEmpid." AND ECOP_VARIABLE='¬¡»Ãœ”_…¡‘—ŸÕ' ";
   $tmpres =DB_query($tmpsql,$db);
   $tmprow =DB_fetch_array($tmpres);
   $Vathmos=$tmprow['ECOP_VALUE'];
-  
-  if($Vathmos==21) {$Vathmos=1;}
-  if($Vathmos==22) {$Vathmos=2;}
-  if($Vathmos==23) {$Vathmos=3;}
-  if($Vathmos==24) {$Vathmos=4;}
-  if($Vathmos==25) {$Vathmos=5;}
-  if($Vathmos==26) {$Vathmos=6;}
-  if($Vathmos==27) {$Vathmos=7;}
-  if($Vathmos==28) {$Vathmos=8;}
-  if($Vathmos==29) {$Vathmos=9;}
-  if($Vathmos==30) {$Vathmos=10;}
-  if($Vathmos==31) {$Vathmos=11;}
-  if($Vathmos==32) {$Vathmos=12;}
-  if($Vathmos==33) {$Vathmos=13;}
-  if($Vathmos==34) {$Vathmos=14;}
-  
-    
+  if ($Vathmos==21) { $Vathmos=1; }
+  elseif ($Vathmos==22) { $Vathmos=2; }
+  elseif ($Vathmos==23) { $Vathmos=3; }
+  elseif ($Vathmos==24) { $Vathmos=4; }
+  elseif ($Vathmos==25) { $Vathmos=5; }
+  elseif ($Vathmos==26) { $Vathmos=6; }
+  elseif ($Vathmos==27) { $Vathmos=7; }
+  elseif ($Vathmos==28) { $Vathmos=8; }
+  elseif ($Vathmos==29) { $Vathmos=9; }
+  elseif ($Vathmos==30) { $Vathmos=10; }
+  elseif ($Vathmos==31) { $Vathmos=11; }
+  elseif ($Vathmos==32) { $Vathmos=12; }
+  elseif ($Vathmos==33) { $Vathmos=13; }
+  elseif ($Vathmos==34) { $Vathmos=14; }
   if ($Vathmos>0) {
     $tmpsql = "SELECT PRM_TBL_NVALUED,PRM_TBL_CVALUE15 FROM PARAMETERS WHERE PRM_TABLE='PLAAP' AND PRM_TBL_ID=".$Vathmos;
     $tmpres =DB_query($tmpsql,$db);
     $tmprow =DB_fetch_array($tmpres);
     $Vathm_descr=$tmprow['PRM_TBL_CVALUE15'];
     $Plafon_AP=$tmprow['PRM_TBL_NVALUED'];
-
     if ($Plafon_AP>0) {
       $tmpsql = "SELECT EXTRA_SALARY.EXSAL_ID FROM EXTRA_SALARY, SALARY WHERE EXTRA_SALARY.SAL_ID = SALARY.SAL_ID AND EXTRA_SALARY.EMP_ID =".$FPEmpid." AND SALARY.PAY_ID=".$Payid;
       $tmpres =DB_query($tmpsql,$db);
@@ -186,11 +185,11 @@ include_once ('include/Func_Efimeries.php');
         $tmpres =DB_query($tmpsql,$db);
         $tmprow =DB_fetch_array($tmpres);
         $Gross_efim = $tmprow['CREDIT']-$tmprow['DEBIT'];
-      $tablemasterrow['SYN_AKATH_APOD'] = G_takt_mikta($FPEmpid,$PatFrom,$PatYear);
+        $tablemasterrow['SYN_AKATH_APOD'] = G_takt_mikta($FPEmpid,$PatFrom,$PatYear);
         $Oikogeneiako = Get_One_BDLRE($FPEmpid,$PatFrom,$PatYear,'BEN','OIKOGEN');
         $Agoni        = Get_One_BDLRE($FPEmpid,$PatFrom,$PatYear,'BEN_RETRO','AGON_PER');
         $Gross_Takt   = G_takt_mikta($FPEmpid,$PatFrom,$PatYear);
-       if ($PatYear==2012 && in_array($PatFrom,array(8,9,10,11,12))) { $Gross_Takt= G_takt_mikta($FPEmpid,1,2013); }
+        if ($PatYear==2012 && in_array($PatFrom,array(8,9,10,11,12))) { $Gross_Takt= G_takt_mikta($FPEmpid,1,2013); }
         $All_Gross_Takt = $Gross_Takt;
         $Gross_Plaf1=$Gross_Takt+($Agoni/12);
         $Plafon1=0;
@@ -202,11 +201,19 @@ include_once ('include/Func_Efimeries.php');
     }
   }
   $Ret_func=array('vath'=>$Vathmos, 'vadescr'=>$Vathm_descr, 'plaap'=>$Plafon_AP, 'exsalid'=>$Exsalid, 'grefim'=>$Gross_efim,
-                  'grtakt'=>$Gross_Takt, 'agonper'=>$Agoni_Perioxi, 'plaf1'=>$Plafon1, 'plaf2'=>$Plafon2,
-                  'allgr'=>$All_Gross_Takt, 'oikog'=>$Oikogeneiako, 'telgr'=>$Gross_Plaf1, 'sumgr'=>$Sum_gross);
+    'grtakt'=>$Gross_Takt, 'agonper'=>$Agoni_Perioxi, 'plaf1'=>$Plafon1, 'plaf2'=>$Plafon2,
+    'allgr'=>$All_Gross_Takt, 'oikog'=>$Oikogeneiako, 'telgr'=>$Gross_Plaf1, 'sumgr'=>$Sum_gross);
   return $Ret_func;
 }
 
+function Get_takt_aneu_salary($FPEmpid) {
+  $exsalsql  = " SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS";
+  $exsalsql .= " WHERE EMP_ID = ".$FPEmpid." AND ECOP_VARIABLE='¡Õ≈’_Ã…”»'";
+  $exsalres  = DB_query($exsalsql,$db);
+  $exsalrow  = DB_fetch_array($exsalres);
+  $aneu_takt = $exsalrow['ECOP_VALUE'];
+  return $aneu_takt;
+}
 
 function Get_Salid($fpc_empid,$fpc_payid) {
   $SQL = "SELECT SALARY.SAL_ID FROM SALARY WHERE SALARY.PAY_ID = ".$fpc_payid." AND SALARY.EMP_ID = ".$fpc_empid;
@@ -225,52 +232,100 @@ function Get_Mod_VarName($fpc_type,$fpc_mod_id) {
   return $Func_ret;
 }
 
+function Get_Mod_Gl_Kae($fpc_type,$fpc_mod_id,$fpc_empid,$Misth_Takt_Type='') {
+  global  $db, $g4check;
+  $SQL_PAYTIME = "SELECT EMP_PAYTIME FROM EMPLOYEES WHERE EMP_ID='".$fpc_empid."'";
+  $RES_PAYTIME = DB_query($SQL_PAYTIME,$db);
+  $ROW_PAYTIME = DB_fetch_array($RES_PAYTIME);
+  $paytime=$ROW_PAYTIME['EMP_PAYTIME'];
+  if ($paytime==0) {
+    $SQL = "SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS WHERE EMP_ID='".$fpc_empid."' AND ECOP_VARIABLE='Ÿ—œÃ…”»…œ”'";
+    $RES = DB_query($SQL,$db);
+    $ROW = DB_fetch_array($RES);
+    $kind_employee = $ROW['ECOP_VALUE'];
+    if ($kind_employee=='1') {
+      $SQL = "SELECT ACC_GEN_LOG_ERGAZ_OROM,ACC_GEN_LOG_ERGOD_OROM FROM BDLRE_GROUP WHERE BDL_ID='".$fpc_mod_id."'";
+      $RES = DB_query($SQL,$db);
+      $ROW = DB_fetch_array($RES);
+      $Func_ret[] = $ROW['ACC_GEN_LOG_ERGAZ_OROM'];
+      $Func_ret[] = $ROW['ACC_GEN_LOG_ERGOD_OROM'];
+    }
+    else {
+      if ($Misth_Takt_Type=='APOL') {
+        $SQL = "SELECT ACC_GEN_LOG_ERGAZ_APOL,ACC_GEN_LOG_ERGOD_APOL FROM BDLRE_GROUP WHERE BDL_ID='".$fpc_mod_id."'";
+        $RES = DB_query($SQL,$db);
+        $ROW = DB_fetch_array($RES);
+        $Func_ret[] = $ROW['ACC_GEN_LOG_ERGAZ_APOL'];
+        $Func_ret[] = $ROW['ACC_GEN_LOG_ERGOD_APOL'];
+      }
+      elseif ($Misth_Takt_Type=='ADEIA') {
+        $SQL = "SELECT ACC_GEN_LOG_ERGAZ_ADEIA,ACC_GEN_LOG_ERGOD_ADEIA FROM BDLRE_GROUP WHERE BDL_ID='".$fpc_mod_id."'";
+        $RES = DB_query($SQL,$db);
+        $ROW = DB_fetch_array($RES);
+        $Func_ret[] = $ROW['ACC_GEN_LOG_ERGAZ_ADEIA'];
+        $Func_ret[] = $ROW['ACC_GEN_LOG_ERGOD_ADEIA'];
+      }
+      else {
+        $SQL = "SELECT ACC_GEN_LOG_ERGAZ,ACC_GEN_LOG_ERGOD FROM BDLRE_GROUP WHERE BDL_ID='".$fpc_mod_id."'";
+        $RES = DB_query($SQL,$db);
+        $ROW = DB_fetch_array($RES);
+        $Func_ret[] = $ROW['ACC_GEN_LOG_ERGAZ'];
+        $Func_ret[] = $ROW['ACC_GEN_LOG_ERGOD'];
+      }
+    }
+  }
+  elseif ($paytime==1) {
+    $SQL = "SELECT ACC_GEN_LOG_ERGAZ_IND,ACC_GEN_LOG_ERGOD_IND FROM BDLRE_GROUP WHERE BDL_ID='".$fpc_mod_id."'";
+    $RES = DB_query($SQL,$db);
+    $ROW = DB_fetch_array($RES);
+    $Func_ret[] = $ROW['ACC_GEN_LOG_ERGAZ_IND'];
+    $Func_ret[] = $ROW['ACC_GEN_LOG_ERGOD_IND'];
+  }
+  elseif ($paytime==2) {
+    $SQL = "SELECT ACC_GEN_LOG_ERGAZ_OPAP,ACC_GEN_LOG_ERGOD_OPAP FROM BDLRE_GROUP WHERE BDL_ID='".$fpc_mod_id."'";
+    $RES = DB_query($SQL,$db);
+    $ROW = DB_fetch_array($RES);
+    $Func_ret[] = $ROW['ACC_GEN_LOG_ERGAZ_OPAP'];
+    $Func_ret[] = $ROW['ACC_GEN_LOG_ERGOD_OPAP'];
+  }
+  elseif ($paytime==3) {
+    $SQL = "SELECT ACC_GEN_LOG_ERGAZ_PSYCH,ACC_GEN_LOG_ERGOD_PSYCH FROM BDLRE_GROUP WHERE BDL_ID='".$fpc_mod_id."'";
+    $RES = DB_query($SQL,$db);
+    $ROW = DB_fetch_array($RES);
+    $Func_ret[] = $ROW['ACC_GEN_LOG_ERGAZ_PSYCH'];
+    $Func_ret[] = $ROW['ACC_GEN_LOG_ERGOD_PSYCH'];
+  }
+  elseif ($paytime==4) {
+    $SQL = "SELECT ACC_GEN_LOG_ERGAZ_NIARX,ACC_GEN_LOG_ERGOD_NIARX FROM BDLRE_GROUP WHERE BDL_ID='".$fpc_mod_id."'";
+    $RES = DB_query($SQL,$db);
+    $ROW = DB_fetch_array($RES);
+    $Func_ret[] = $ROW['ACC_GEN_LOG_ERGAZ_NIARX'];
+    $Func_ret[] = $ROW['ACC_GEN_LOG_ERGOD_NIARX'];
+  }
+  if ($g4check) {print '<BR>REP_FILL_PCK-Get_Mod_Gl_Kae()-ZXCVB_PAYTIME= [ '.$paytime.' ] - KIND_EMPLOYEE = [ '.$kind_employee.' ] - SQL = [ '.$SQL.' ]';}
+  if ($Func_ret=='') { $Func_ret = 'AGNOSTO'; }
+  if ($g4check) {print '<BR>REP_FILL_PCK-Get_Mod_Gl_Kae()-ZXCVB '."<pre>"; print_r($Func_ret); print "</pre>";}
+  return $Func_ret;
+}
+
 function G_VarPA($fpc_type,$fpc_mod_id,$fpc_tid) {
   $ProsAmoiv = array(
-        27=>'ENERG1',
-        28=>'ENERG2',
-        31=>'ENERG3',
-        32=>'ENERG4',
-        33=>'MIKTH1',
-        34=>'MIKTH2',
-        35=>'MIKTH3',
-        36=>'MIKTH4',
-        37=>'ETOIM1',
-        38=>'ETOIM2',
-        39=>'ETOIM3',
-        40=>'ETOIM4',
-        21=>'KANONIKH',
-        30=>'KANONYXT',
-        23=>'ARGIA',
-        24=>'ARGNYXT',
-        25=>'SYMPLHR',
-        26=>'SYMPNYXT',
-		
-		65=>'KANONYPER',
-		66=>'KANNYXT',
-		67=>'KANARG',
-		68=>'KANRGNYXT',
-		69=>'KANYPERERG',
-		70=>'KANYPERERGNYXT',
-		71=>'KANYPERERGARG',
-		72=>'KANYPERERGARGNYXT',
-		73=>'EXAIRYPER',
-		74=>'EXAIRNYXT',
-		75=>'EXAIRARG',
-		76=>'EXAIRARGNYXT',
-		77=>'AMOIBDS',
-		78=>'AMOIBDS',
-      -123=>'PEREFANADR'
-        );
+    27=>'ENERG1',     28=>'ENERG2',         31=>'ENERG3',         32=>'ENERG4',             33=>'MIKTH1',      34=>'MIKTH2',      35=>'MIKTH3',       36=>'MIKTH4',         37=>'ETOIM1',      38=>'ETOIM2',      39=>'ETOIM3',
+    40=>'ETOIM4',     21=>'KANONIKH',       30=>'KANONYXT',       23=>'ARGIA',              24=>'ARGNYXT',     25=>'SYMPLHR',     26=>'SYMPNYXT',     65=>'KANONYPER',      66=>'KANNYXT',     67=>'KANARG',      68=>'KANRGNYXT',
+    69=>'KANYPERERG', 70=>'KANYPERERGNYXT', 71=>'KANYPERERGARG',  72=>'KANYPERERGARGNYXT',  73=>'EXAIRYPER',   74=>'EXAIRNYXT',   75=>'EXAIRARG',     76=>'EXAIRARGNYXT',   77=>'AMOIBDS',     78=>'AMOIBDS',     62=>'KANONYXT',
+    63=>'KANOARG',    64=>'KANOARGNYXT',    87=>'EREVNITIS',     208=>'EKTOSESOTOLK',      209=>'EKTOSESOT12',210=>'EKTOSESOT13',213=>'EKTOSEXOTOLK',214=>'EKTOSEXOTSYMPL',215=>'EKTOSEXOT30',216=>'EKTOSEXOT50',217=>'EKTOSEXOT75',
+    211=>'KHMESOT',  218=>'KHMEXOT',       220=>'EKTOSMETAK',   -123=>'PEREFANADR',       -124=>'PERVARDANADR'
+    );
   if ($fpc_type=='HOUR') { $Func_ret = $ProsAmoiv[$fpc_tid]; }
+  elseif ($fpc_type=='EKTS') { $Func_ret = $ProsAmoiv[$fpc_tid]; }
   elseif ($fpc_type=='EXTH') { $Func_ret = 'BONUS'; }
   elseif ($fpc_type=='PLAE') { $Func_ret = 'PER_EFHMAP'; }
   elseif ($fpc_type=='PLAF') { $Func_ret = 'PLAFON'; }
   elseif ($fpc_type=='PLAP') { $Func_ret = 'PER_AP'; }
   elseif ($fpc_type=='SEVE') { $Func_ret = 'SEVEN'; }
+  elseif ($fpc_type=='COVI') { $Func_ret = 'COVID'; }
   else {
     $SQL = "SELECT BDL_VAR FROM BDLRE_GROUP WHERE BDL_ID='".$fpc_mod_id."' AND BDL_TYPE='".$fpc_type."'";
-
     $RES = DB_query($SQL,$db);
     $ROW = DB_fetch_array($RES);
     $Func_ret = $ROW['BDL_VAR'];
@@ -279,18 +334,16 @@ function G_VarPA($fpc_type,$fpc_mod_id,$fpc_tid) {
   return $Func_ret;
 }
 
-function Get_Days_kliniko($fpc_empid){
-$SQL = "SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS WHERE EMP_ID=".$fpc_empid." AND ECOP_VARIABLE='«Ã≈—≈”_≈—√¡”…¡”_ƒ≈–' ";
+function Get_Days_kliniko($fpc_empid) {
+  $SQL = "SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS WHERE EMP_ID=".$fpc_empid." AND ECOP_VARIABLE='«Ã≈—≈”_≈—√¡”…¡”_ƒ≈–' ";
   $RES = DB_query($SQL,$db);
   $ROW = DB_fetch_array($RES);
   $days =$ROW['ECOP_VALUE'];
   return $days;
 }
 
-
-
 function Get_VathmosDescr($fpc_empid) {
-  $XML_Vathm_descr=array(1=>'ƒ…≈’»’Õ‘«” √…¡‘—œ” ≈”’',2=>'≈–…Ã≈À«‘«” ¡ ≈”’',3=>'≈–…Ã≈À«‘«” ¬ ≈”’',4=>'≈…ƒ… ≈’œÃ≈Õœ” ≈”’',5=>'¡Õ¡–À«—Ÿ‘«”  ¡»«√«‘«”',6=>' ¡»«√«‘«”',7=>'¡√—œ‘… œ” …¡‘—œ”',8=>'¡√—œ‘… œ” …¡‘—œ”',9=>'¡√—œ‘… œ” …¡‘—œ”',10=>'À≈ ‘œ—¡”',11=>'≈–… œ’—œ”  ¡»«√«‘«”',12=>'≈–…Ã≈À«‘«” ¡ ≈”’',13=>'≈–…Ã≈À«‘«” ¬ ≈”’',14=>'Àœ◊¡√œ”');
+  $XML_Vathm_descr=array(1=>'ƒ…≈’»’Õ‘«” √…¡‘—œ” ≈”’',2=>'≈–…Ã≈À«‘«” ¡ ≈”’',3=>'≈–…Ã≈À«‘«” ¬ ≈”’',4=>'≈…ƒ… ≈’œÃ≈Õœ” ≈”’',5=>'¡Õ¡–À«—Ÿ‘«”  ¡»«√«‘«”',6=>' ¡»«√«‘«”',7=>'¡√—œ‘… œ” …¡‘—œ”',8=>'¡√—œ‘… œ” …¡‘—œ”',9=>'¡√—œ‘… œ” …¡‘—œ”',10=>'À≈ ‘œ—¡”',11=>'≈–… œ’—œ”  ¡»«√«‘«”',12=>'≈–…Ã≈À«‘«” ¡ ≈”’',13=>'≈–…Ã≈À«‘«” ¬ ≈”’',14=>'Àœ◊¡√œ”',16=>'¡Ã…”».≈…ƒ… ≈’œÃ≈Õœ”');
   $Func_ret=array();
   $SQL = "SELECT ECOP_VALUE FROM EMP_CONTRACT_PARAMS WHERE EMP_ID=".$fpc_empid." AND ECOP_VARIABLE='¬¡»Ãœ”_…¡‘—ŸÕ' ";
   $RES = DB_query($SQL,$db);

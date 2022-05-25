@@ -70,7 +70,7 @@ $Misth_Per=$table['PER_MONTH'];
 $Misth_Year=$table['PER_YEAR'];
 $ReportTitle3='лгмас/етос   '.$myrow['PAY_COMMENTS'];
 $Lock_Misth=G_DBfield("SELECT LOCK_MISTH FROM PAYROLL_TRANSACTIONS WHERE PAYROLL_TRANSACTIONS.PAY_YEAR || substr('0' || PAYROLL_TRANSACTIONS.PAT_ID, -2, 2) =".$PatYearFrom.substr('0'.$PatFrom,-2,2),"LOCK_MISTH");
-if ($_SESSION['GLInstall']!='AGLAIA') { $Lock_Misth=1; }
+if (!in_array($_SESSION['GLInstall'],array('AGLAIA','YPE2'))) { $Lock_Misth=1; }
 if ($Lock_Misth>0) {
   foreach ($MasterTable as $myrow) {
     unset($DetailTable);
